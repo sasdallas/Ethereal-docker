@@ -1,2 +1,2 @@
-# reduceOS-docker
-Docker build tools for reduceOS
+# Ethereal-docker
+Docker build tools for Ethereal
