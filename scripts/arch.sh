@@ -1,1 +1,1 @@
-echo i686-elf
+echo x86_64-ethereal
