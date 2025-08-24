@@ -13,10 +13,11 @@ mkdir /opt/toolchain
 # We need to clone Ethereal and install libpolyhedron headers
 git clone https://github.com/sasdallas/Ethereal /opt/Ethereal
 cd /opt/Ethereal/
+git submodule init
+git submodule update
 mkdir -pv build-output/sysroot/usr/include/
-cp -rp /opt/Ethereal/libpolyhedron/include/ build-output/sysroot/usr/
-cp -rp /opt/Ethereal/libpolyhedron/arch/x86_64/include/ build-output/sysroot/usr/
 cd /opt/toolchain
+
 
 # Download Ethereal toolchain
 git clone https://github.com/sasdallas/Ethereal-Toolchain /opt/toolchain/Ethereal-Toolchain
@@ -51,10 +52,31 @@ mkdir build-gcc
 cd build-gcc
 
 # C++ building is a bit messed up
-../gcc-${GCC_VERSION}/configure --prefix=/usr --target=x86_64-ethereal --disable-multilib --enable-languages=c --with-sysroot=/opt/Ethereal/build-output/sysroot/
+../gcc-${GCC_VERSION}/configure --prefix=/usr --target=x86_64-ethereal --disable-multilib --enable-languages=c,c++ --with-sysroot=/opt/Ethereal/build-output/sysroot/
 make -j4 all-gcc
+make install-gcc
+
+cd /opt/Ethereal
+
+# Download and extract ACPICA
+wget https://downloadmirror.intel.com/834974/acpica-unix-20240927.tar.gz -O external/acpica/acpica.tar.gz
+cd external/acpica
+tar -xf acpica.tar.gz
+mv acpica-unix-20240927 acpica-src
+rm acpica.tar.gz
+
+cd /opt/Ethereal
+bash -c buildscripts/install-headers.sh
+
+cd /opt/toolchain/build-gcc/
+
 make -j4 all-target-libgcc
-make install-gcc install-target-libgcc
+make install-target-libgcc
+
+echo === GCC BUILD FINISHED ===
+
+#make -j4 all-target-libstdc++-v3 
+#make install-target-libstdc++-v3
 
 cd /opt/
 rm -rf toolchain

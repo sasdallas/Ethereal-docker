@@ -4,6 +4,9 @@
 rm -rf /opt/Ethereal
 git clone https://github.com/sasdallas/Ethereal /opt/Ethereal
 cd /opt/Ethereal
+git config --global --add safe.directory /opt/Ethereal
+git submodule init
+git submodule update
 
 # Setup architecture
 cp /opt/build/arch.sh /opt/Ethereal/buildscripts/build-arch.sh
